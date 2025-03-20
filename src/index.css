@@ -1,0 +1,241 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+@layer utilities {
+  .bg-aurora {
+    background: radial-gradient(
+        circle at 10% 10%,
+        rgba(133, 144, 255, 0.4) 0%,
+        rgba(133, 144, 255, 0) 30%
+      ),
+      radial-gradient(
+        circle at 90% 90%,
+        rgba(133, 144, 255, 0.4) 0%,
+        rgba(133, 144, 255, 0) 30%
+      );
+  }
+}
+
+/* Add these styles for the comparison slider */
+.comparison-slider {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  border-radius: 0.5rem;
+}
+
+.comparison-slider .before,
+.comparison-slider .after {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.comparison-slider .before {
+  z-index: 1;
+  clip-path: polygon(0 0, var(--position) 0, var(--position) 100%, 0 100%);
+}
+
+.comparison-slider .after {
+  z-index: 2;
+  clip-path: polygon(var(--position) 0, 100% 0, 100% 100%, var(--position) 100%);
+}
+
+.comparison-slider .slider {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+}
+
+.comparison-slider .slider-line {
+  position: absolute;
+  inset: 0;
+  width: 4px;
+  height: 100%;
+  background-color: #fff;
+  left: var(--position);
+  transform: translateX(-50%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.comparison-slider .slider-button {
+  position: absolute;
+  top: 50%;
+  left: var(--position);
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  z-index: 2;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Slider indicators and labels */
+.comparison-slider .indicator {
+  position: absolute;
+  top: 20px;
+  padding: 8px 16px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  border-radius: 8px;
+  font-weight: 500;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.comparison-slider .before-indicator {
+  left: 20px;
+}
+
+.comparison-slider .after-indicator {
+  right: 20px;
+}
+
+.comparison-slider .before-label,
+.comparison-slider .after-label {
+  display: none;
+}
+
+/* Slider button with arrow icon */
+.comparison-slider .slider-button {
+  position: absolute;
+  top: 50%;
+  left: var(--position);
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 4;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.comparison-slider .slider-button::before,
+.comparison-slider .slider-button::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 2px;
+  background-color: #666;
+  left: 50%;
+}
+
+.comparison-slider .slider-button::before {
+  transform: translate(-50%, -4px) rotate(-45deg);
+}
+
+.comparison-slider .slider-button::after {
+  transform: translate(-50%, 4px) rotate(45deg);
+}
+
+.comparison-slider .slider-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: white;
+  left: var(--position);
+  transform: translateX(-50%);
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .comparison-slider .indicator {
+    padding: 6px 12px;
+    font-size: 14px;
+    top: 12px;
+  }
+
+  .comparison-slider .before-indicator {
+    left: 12px;
+  }
+
+  .comparison-slider .after-indicator {
+    right: 12px;
+  }
+
+  .comparison-slider .slider-button {
+    width: 32px;
+    height: 32px;
+  }
+
+  .comparison-slider .slider-button::before,
+  .comparison-slider .slider-button::after {
+    width: 8px;
+  }
+}
+
+/* Larger screens */
+@media (min-width: 1536px) {
+  .comparison-slider .indicator {
+    padding: 12px 24px;
+    font-size: 18px;
+    top: 24px;
+  }
+
+  .comparison-slider .slider-button {
+    width: 48px;
+    height: 48px;
+  }
+
+  .comparison-slider .slider-button::before,
+  .comparison-slider .slider-button::after {
+    width: 12px;
+  }
+}
+
+/* 2K and 4K screens */
+@media (min-width: 2560px) {
+  .comparison-slider .indicator {
+    padding: 16px 32px;
+    font-size: 24px;
+    top: 32px;
+  }
+
+  .comparison-slider .slider-button {
+    width: 64px;
+    height: 64px;
+  }
+
+  .comparison-slider .slider-button::before,
+  .comparison-slider .slider-button::after {
+    width: 16px;
+    height: 3px;
+  }
+}
+
+/* Add other comparison slider styles from the HTML file */
