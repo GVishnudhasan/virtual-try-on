@@ -49,7 +49,7 @@ const SoulSerumAR: React.FC<FaceMeshProps> = ({ onResults }) => {
       "Aqua, Aloe Barbadensis Leaf Juice*, Glycerin*, Niacinamide, Propanediol, Sodium Hyaluronate, Hawaiian Sandalwood Extract*, Kukui Nut Oil*, Hawaiian Honey*, Vitamin E...",
     howToUse:
       "Apply 2-3 drops to cleansed skin morning and night. Gently press into face, neck, and décolletage. Follow with moisturizer.",
-    price: "$54.00",
+    price: "$138.00",
     size: "30 ml / 1 fl oz",
     shopifyLink: "https://www.puremanahawaii.com/products/soul-serum",
   };
