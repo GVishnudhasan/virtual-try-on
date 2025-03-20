@@ -29,11 +29,8 @@ const SoulSerumAR: React.FC<FaceMeshProps> = ({ onResults }) => {
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
-  
-  // Offscreen watermark canvas (cached)
-  const watermarkCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  // Product information
+  // Product information - enhanced with more details from Pure Mana Hawaii
   const productInfo = {
     name: "Soul Serum",
     subtitle: "Illuminating Facial Serum",
@@ -52,105 +49,54 @@ const SoulSerumAR: React.FC<FaceMeshProps> = ({ onResults }) => {
       "Aqua, Aloe Barbadensis Leaf Juice*, Glycerin*, Niacinamide, Propanediol, Sodium Hyaluronate, Hawaiian Sandalwood Extract*, Kukui Nut Oil*, Hawaiian Honey*, Vitamin E...",
     howToUse:
       "Apply 2-3 drops to cleansed skin morning and night. Gently press into face, neck, and décolletage. Follow with moisturizer.",
-    price: "$138.00",
+    price: "$54.00",
     size: "30 ml / 1 fl oz",
     shopifyLink: "https://www.puremanahawaii.com/products/soul-serum",
   };
 
-  // Check mobile device
+  // Check if on mobile device
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Preload images
+  // Preload all images
   useEffect(() => {
-    const loadImage = (src: string, ref: React.MutableRefObject<HTMLImageElement | null>) => {
-      const img = new Image();
-      img.src = src;
-      img.onload = () => {
-        ref.current = img;
-        checkImagesLoaded();
-      };
+    const logoImage = new Image();
+    logoImage.src = logo;
+    logoImage.onload = () => {
+      logoImageRef.current = logoImage;
+      checkImagesLoaded();
     };
 
-    loadImage(logo, logoImageRef);
-    loadImage(droplets, dropletImageRef);
-    loadImage(productImage, productImageRef);
+    const dropletImage = new Image();
+    dropletImage.src = droplets;
+    dropletImage.onload = () => {
+      dropletImageRef.current = dropletImage;
+      checkImagesLoaded();
+    };
+
+    const productImg = new Image();
+    productImg.src = productImage;
+    productImg.onload = () => {
+      productImageRef.current = productImg;
+      checkImagesLoaded();
+    };
 
     function checkImagesLoaded() {
-      if (logoImageRef.current && dropletImageRef.current && productImageRef.current) {
+      if (
+        logoImageRef.current &&
+        dropletImageRef.current &&
+        productImageRef.current
+      ) {
         setImagesLoaded(true);
       }
     }
   }, []);
-
-  // Create or update the offscreen watermark canvas based on current logical dimensions
-  const updateWatermarkCanvas = (logicalWidth: number, logicalHeight: number) => {
-    if (!logoImageRef.current) return;
-    const padding = Math.max(10, Math.min(logicalWidth * 0.02, 18));
-    const logoHeight = Math.round(Math.max(20, Math.min(logicalHeight * 0.06, 36)));
-    const aspectRatio = logoImageRef.current.width / logoImageRef.current.height;
-    const logoWidth = Math.round(logoHeight * aspectRatio);
-    const fontSize = Math.round(Math.max(10, Math.min(logicalWidth * 0.02, 14)));
-
-    // Create a temporary canvas to measure text
-    const tempCanvas = document.createElement("canvas");
-    const tempCtx = tempCanvas.getContext("2d");
-    if (!tempCtx) return;
-    tempCtx.font = `bold ${fontSize}px sans-serif`;
-    const textWidth = Math.round(tempCtx.measureText("Powered by").width);
-
-    // Calculate background dimensions
-    const bgWidth = Math.round(textWidth + logoWidth + padding * 3);
-    const bgHeight = Math.round(Math.max(logoHeight, fontSize) + padding * 1.5);
-
-    // Create offscreen canvas with the watermark area dimensions
-    const offCanvas = document.createElement("canvas");
-    offCanvas.width = bgWidth;
-    offCanvas.height = bgHeight;
-    const offCtx = offCanvas.getContext("2d");
-    if (!offCtx) return;
-
-    // Set image smoothing for crisp rendering
-    offCtx.imageSmoothingEnabled = true;
-    offCtx.imageSmoothingQuality = "high";
-    offCtx.font = `bold ${fontSize}px sans-serif`;
-    offCtx.textBaseline = "middle";
-
-    // Draw rounded background
-    offCtx.fillStyle = "rgba(255, 255, 255, 0.85)";
-    offCtx.beginPath();
-    if (offCtx.roundRect) {
-      offCtx.roundRect(0, 0, bgWidth, bgHeight, 10);
-    } else {
-      // Fallback if roundRect is not available
-      offCtx.moveTo(10, 0);
-      offCtx.lineTo(bgWidth - 10, 0);
-      offCtx.quadraticCurveTo(bgWidth, 0, bgWidth, 10);
-      offCtx.lineTo(bgWidth, bgHeight - 10);
-      offCtx.quadraticCurveTo(bgWidth, bgHeight, bgWidth - 10, bgHeight);
-      offCtx.lineTo(10, bgHeight);
-      offCtx.quadraticCurveTo(0, bgHeight, 0, bgHeight - 10);
-      offCtx.lineTo(0, 10);
-      offCtx.quadraticCurveTo(0, 0, 10, 0);
-    }
-    offCtx.fill();
-
-    // Draw watermark text
-    offCtx.fillStyle = "#222";
-    offCtx.fillText("Powered by", padding, bgHeight / 2);
-
-    // Draw logo image
-    const logoX = padding + textWidth + Math.round(padding / 2);
-    const logoY = Math.round((bgHeight - logoHeight) / 2);
-    offCtx.drawImage(logoImageRef.current, logoX, logoY, logoWidth, logoHeight);
-
-    // Cache the offscreen canvas
-    watermarkCanvasRef.current = offCanvas;
-  };
 
   // Main drawing function
   const drawSplitCanvas = (results: { multiFaceLandmarks: any[][] }) => {
@@ -158,71 +104,92 @@ const SoulSerumAR: React.FC<FaceMeshProps> = ({ onResults }) => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+    const splitPosition = (sliderPositionRef.current / 100) * canvas.width;
 
-    // Logical dimensions (scaled by devicePixelRatio)
-    const dpr = window.devicePixelRatio || 1;
-    const logicalWidth = canvas.width / dpr;
-    const logicalHeight = canvas.height / dpr;
-    const splitPosition = (sliderPositionRef.current / 100) * logicalWidth;
+    // Clear the canvas and draw the video frame
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
 
-    // Clear canvas and draw video frame (using logical dimensions)
-    ctx.clearRect(0, 0, logicalWidth, logicalHeight);
-    ctx.drawImage(videoRef.current, 0, 0, logicalWidth, logicalHeight);
-
-    // Draw the serum effect on the right side
+    // Draw the serum effect (right side) using foundation logic
     ctx.save();
     ctx.beginPath();
-    ctx.rect(splitPosition, 0, logicalWidth - splitPosition, logicalHeight);
+    ctx.rect(splitPosition, 0, canvas.width - splitPosition, canvas.height);
     ctx.clip();
     drawFoundation(results, canvas, ctx, selectedColorRef.current + "FF");
     ctx.restore();
 
-    // Draw before/after slider line
+    // Draw the before/after slider line
     ctx.beginPath();
     ctx.moveTo(splitPosition, 0);
-    ctx.lineTo(splitPosition, logicalHeight);
+    ctx.lineTo(splitPosition, canvas.height);
     ctx.lineWidth = 2;
     ctx.strokeStyle = "#FFFFFF";
     ctx.stroke();
 
-    // Draw slider handle with shadow
-    const handleRadius = Math.min(15, logicalWidth * 0.025);
+    // Draw handle with shadow for better visibility
+    const handleRadius = Math.min(15, canvas.width * 0.025);
     ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
     ctx.shadowBlur = 5;
     ctx.shadowOffsetX = 2;
     ctx.shadowOffsetY = 2;
     ctx.beginPath();
-    ctx.arc(splitPosition, logicalHeight / 2, handleRadius, 0, 2 * Math.PI);
+    ctx.arc(splitPosition, canvas.height / 2, handleRadius, 0, 2 * Math.PI);
     ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
     ctx.fill();
     ctx.shadowColor = "transparent";
     ctx.lineWidth = 2;
-    ctx.strokeStyle = "#F1C27D";
+    ctx.strokeStyle = "#F1C27D"; // Changed to match Soul Serum color
     ctx.stroke();
 
     // Draw slider arrows inside the handle
     ctx.beginPath();
-    ctx.moveTo(splitPosition - 6, logicalHeight / 2);
-    ctx.lineTo(splitPosition - 2, logicalHeight / 2 - 4);
-    ctx.lineTo(splitPosition - 2, logicalHeight / 2 + 4);
-    ctx.moveTo(splitPosition + 6, logicalHeight / 2);
-    ctx.lineTo(splitPosition + 2, logicalHeight / 2 - 4);
-    ctx.lineTo(splitPosition + 2, logicalHeight / 2 + 4);
-    ctx.fillStyle = "#F1C27D";
+    ctx.moveTo(splitPosition - 6, canvas.height / 2);
+    ctx.lineTo(splitPosition - 2, canvas.height / 2 - 4);
+    ctx.lineTo(splitPosition - 2, canvas.height / 2 + 4);
+    ctx.moveTo(splitPosition + 6, canvas.height / 2);
+    ctx.lineTo(splitPosition + 2, canvas.height / 2 - 4);
+    ctx.lineTo(splitPosition + 2, canvas.height / 2 + 4);
+    ctx.fillStyle = "#F1C27D"; // Changed to match Soul Serum color
     ctx.fill();
 
-    // Draw the pre-rendered watermark (if available)
-    if (watermarkCanvasRef.current) {
-      const padding = Math.max(10, Math.min(logicalWidth * 0.02, 18));
-      const wmWidth = watermarkCanvasRef.current.width;
-      const wmHeight = watermarkCanvasRef.current.height;
-      const bgX = padding;
-      const bgY = logicalHeight - wmHeight - padding;
-      ctx.drawImage(watermarkCanvasRef.current, bgX, bgY);
+    // Draw responsive droplet watermark
+    // if (dropletImageRef.current) {
+    //   // More responsive sizing based on the smaller of width or height
+    //   const minDimension = Math.min(canvas.width, canvas.height);
+    //   const dropletSize = Math.max(minDimension * 0.1, 40); // Minimum size of 40px, scales with screen
+
+    //   // Padding that scales with screen size, with minimum/maximum limits
+    //   const padPercentage = 0.02; // 2% of canvas size
+    //   const pad = Math.max(10, Math.min(20, canvas.width * padPercentage));
+
+    //   ctx.save();
+    //   ctx.globalAlpha = 0.85;
+    //   ctx.drawImage(
+    //     dropletImageRef.current,
+    //     canvas.width - dropletSize - pad,
+    //     pad,
+    //     dropletSize,
+    //     dropletSize
+    //   );
+    //   ctx.restore();
+    // }
+    // In your drawSplitCanvas function (foundationOverride.tsx or SoulSerumAR component)
+    if (dropletImageRef.current) {
+      const dropletSize = Math.min(canvas.width * 0.15, 120);
+      const pad = Math.min(canvas.width * 0.02, 15);
+      // Add an offset (e.g. 20px) to move the droplet image down
+      const dropletYOffset = pad + 35;
+      ctx.drawImage(
+        dropletImageRef.current,
+        canvas.width - dropletSize - pad,
+        dropletYOffset,
+        dropletSize,
+        dropletSize
+      );
     }
   };
 
-  // Throttle slider updates using requestAnimationFrame
+  // Throttle slider updates with requestAnimationFrame
   useEffect(() => {
     let animationFrameId: number | null = null;
     const handleMouseDown = () => setIsDragging(true);
@@ -233,7 +200,10 @@ const SoulSerumAR: React.FC<FaceMeshProps> = ({ onResults }) => {
       animationFrameId = requestAnimationFrame(() => {
         const rect = canvasRef.current!.getBoundingClientRect();
         const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
-        const newPos = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
+        const newPos = Math.max(
+          0,
+          Math.min(100, ((clientX - rect.left) / rect.width) * 100)
+        );
         sliderPositionRef.current = newPos;
         setSliderPosition(newPos);
         if (resultsRef.current) drawSplitCanvas(resultsRef.current);
@@ -263,52 +233,47 @@ const SoulSerumAR: React.FC<FaceMeshProps> = ({ onResults }) => {
     };
   }, [isDragging]);
 
-  // Setup video, canvas dimensions, and face mesh processing
+  // Set up video, canvas dimensions, and face mesh processing
   useEffect(() => {
     if (!videoRef.current || !canvasRef.current) return;
 
     const handleMetadata = () => {
       if (!videoRef.current || !canvasRef.current) return;
 
+      // Set canvas dimensions to match video dimensions exactly
       const vw = videoRef.current.videoWidth;
       const vh = videoRef.current.videoHeight;
-      const dpr = window.devicePixelRatio || 1;
 
       if (vw && vh) {
-        // Set actual pixel dimensions for high‑DPI rendering
-        canvasRef.current.width = vw * dpr;
-        canvasRef.current.height = vh * dpr;
-        // Set CSS dimensions to logical size
-        canvasRef.current.style.width = `${vw}px`;
-        canvasRef.current.style.height = `${vh}px`;
+        canvasRef.current.width = vw;
+        canvasRef.current.height = vh;
 
-        const ctx = canvasRef.current.getContext("2d");
-        if (ctx) {
-          ctx.scale(dpr, dpr);
-        }
-        // Update container styles for aspect ratio
+        // Update container styles to maintain aspect ratio
         updateCanvasContainerStyles(vw, vh);
-        // Update watermark canvas (cache) for current dimensions
-        updateWatermarkCanvas(vw, vh);
         setVideoLoaded(true);
         setIsLoading(false);
       }
     };
 
+    const processResults = (results: { multiFaceLandmarks: any[][] }) => {
+      resultsRef.current = results;
+      if (onResults) onResults(results);
+      drawSplitCanvas(results);
+    };
+
+    // Listen for metadata to get video dimensions
     videoRef.current.addEventListener("loadedmetadata", handleMetadata);
 
+    // Build face mesh
     const faceMesh = buildFaceMeshes(
       canvasRef.current,
       videoRef.current,
-      (results) => {
-        resultsRef.current = results;
-        if (onResults) onResults(results);
-        drawSplitCanvas(results);
-      },
+      processResults,
       drawFoundation,
       selectedColorRef.current
     );
 
+    // Start camera
     startCamera(videoRef.current, faceMesh, cameraRef);
 
     return () => {
@@ -318,30 +283,50 @@ const SoulSerumAR: React.FC<FaceMeshProps> = ({ onResults }) => {
     };
   }, []);
 
-  // Update canvas container styles to maintain aspect ratio
-  const updateCanvasContainerStyles = (videoWidth: number, videoHeight: number) => {
+  // Update canvas container styles to maintain video aspect ratio
+  const updateCanvasContainerStyles = (
+    videoWidth: number,
+    videoHeight: number
+  ) => {
     if (!canvasContainerRef.current || !canvasRef.current) return;
+
     const container = canvasContainerRef.current;
     const containerWidth = container.clientWidth;
+
+    // Calculate height based on video aspect ratio
     const aspectRatio = videoHeight / videoWidth;
     const heightValue = containerWidth * aspectRatio;
+
+    // Set container height to maintain aspect ratio
     container.style.height = `${heightValue}px`;
+
+    // Set canvas CSS dimensions to fill container while maintaining aspect ratio
     canvasRef.current.style.width = "100%";
     canvasRef.current.style.height = "100%";
     canvasRef.current.style.objectFit = "cover";
   };
 
-  // Handle window resize
+  // Handle window resize responsively
   useEffect(() => {
     if (!videoLoaded) return;
+
     const handleResize = () => {
-      if (videoRef.current && videoRef.current.videoWidth && videoRef.current.videoHeight) {
-        updateCanvasContainerStyles(videoRef.current.videoWidth, videoRef.current.videoHeight);
-        updateWatermarkCanvas(videoRef.current.videoWidth, videoRef.current.videoHeight);
+      if (
+        videoRef.current &&
+        videoRef.current.videoWidth &&
+        videoRef.current.videoHeight
+      ) {
+        updateCanvasContainerStyles(
+          videoRef.current.videoWidth,
+          videoRef.current.videoHeight
+        );
         if (resultsRef.current) drawSplitCanvas(resultsRef.current);
       }
     };
+
+    // Initial sizing
     handleResize();
+
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [videoLoaded]);
@@ -352,26 +337,34 @@ const SoulSerumAR: React.FC<FaceMeshProps> = ({ onResults }) => {
         {/* Header */}
         <div className="text-center mb-4 md:mb-6 lg:mb-8">
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light tracking-tight">
-            <span className="text-[#C09D7C] font-normal">Soul Serum</span> Virtual Try On
+            <span className="text-[#C09D7C] font-normal">Soul Serum</span>{" "}
+            Virtual Try On
           </h1>
           <p className="text-sm sm:text-base md:text-lg lg:text-xl text-[#78624E] mt-2 max-w-2xl mx-auto font-light">
-            Experience the illuminating effect of our Hawaiian botanical serum on your skin
+            Experience the illuminating effect of our Hawaiian botanical serum
+            on your skin
           </p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-6 md:gap-8 lg:gap-10 w-full">
           {/* AR Card Section */}
           <div className="w-full lg:w-3/5 bg-white/95 backdrop-blur-sm rounded-2xl h-1/2 shadow-lg overflow-hidden">
-            <div ref={canvasContainerRef} className="relative w-full h-full" style={{ aspectRatio: videoLoaded ? "auto" : "16/9" }}>
-              <canvas ref={canvasRef} className="absolute inset-0 object-cover z-20" />
+            <div
+              ref={canvasContainerRef}
+              className="relative w-full"
+              style={{ aspectRatio: videoLoaded ? "auto" : "16/9" }}
+            >
+              <canvas
+                ref={canvasRef}
+                className="absolute inset-0"
+                style={{ zIndex: 2 }}
+              />
               <div
                 ref={sliderRef}
-                className="absolute top-0 bottom-0 w-8 z-50 cursor-ew-resize select-none"
+                className="absolute top-0 bottom-0 w-8 z-10 cursor-ew-resize"
                 style={{
                   left: `calc(${sliderPosition}% - 16px)`,
                   touchAction: "none",
-                  WebkitUserSelect: "none",
-                  WebkitTouchCallout: "none",
                 }}
               />
               {(isLoading || !imagesLoaded) && (
@@ -387,8 +380,24 @@ const SoulSerumAR: React.FC<FaceMeshProps> = ({ onResults }) => {
                   After
                 </div>
               </div>
-              <img src={droplets} alt="Droplet Overlay" className="absolute top-10 sm:top-12 md:top-16 right-4 z-30 w-10 sm:w-16 md:w-24 lg:w-32" />
             </div>
+
+            {/* Watermark overlay */}
+            <div
+              className="absolute bottom-2 left-2 z-40 flex items-center space-x-2 bg-white/55 px-2 py-1 rounded shadow-sm
+                sm:px-3 sm:py-1 md:px-4 md:py-2"
+            >
+              <span className="text-xs sm:text-sm md:text-base font-medium text-gray-800">
+                Powered by
+              </span>
+              <img
+                src={logo}
+                alt="Omnia Logo"
+                className="h-6 sm:h-8 md:h-10 object-contain"
+              />
+            </div>
+
+            {/* Hidden video element */}
             <video
               ref={videoRef}
               className="hidden"
@@ -401,10 +410,16 @@ const SoulSerumAR: React.FC<FaceMeshProps> = ({ onResults }) => {
 
           {/* Product Info Section */}
           <div className="w-full lg:w-2/5 flex flex-col gap-4 sm:gap-5 md:gap-6">
+            {/* Product Card with Image */}
             <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg p-4 sm:p-5 md:p-6 lg:p-7">
               <div className="flex flex-col sm:flex-row items-center mb-4 sm:mb-6">
+                {/* Product Image */}
                 <div className="w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 xl:w-48 xl:h-48 flex-shrink-0 bg-gradient-to-br from-[#f8f4ed] to-[#fcfaf5] rounded-xl flex items-center justify-center shadow-sm mb-4 sm:mb-0">
-                  <img src={productImage} alt="Soul Serum Product" className="w-full h-full object-contain p-2" />
+                  <img
+                    src={productImage}
+                    alt="Soul Serum Product"
+                    className="w-full h-full object-contain p-2"
+                  />
                 </div>
                 <div className="sm:ml-5 text-center sm:text-left">
                   <h2 className="text-xl sm:text-2xl md:text-3xl font-light text-[#78624E]">
@@ -427,6 +442,40 @@ const SoulSerumAR: React.FC<FaceMeshProps> = ({ onResults }) => {
                 </div>
               </div>
 
+              {/* Tabs for Product Info */}
+              <div className="mt-4 space-y-4">
+                {/* <div>
+                  <h3 className="font-medium text-sm sm:text-base md:text-lg text-[#78624E] mb-2 border-b border-[#E5D9CC] pb-1">
+                    Key Benefits
+                  </h3>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {productInfo.benefits.map((benefit, i) => (
+                      <li key={i} className="flex items-start text-xs sm:text-sm md:text-base text-gray-700">
+                        <span className="text-[#C09D7C] mr-2">✦</span> {benefit}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <div>
+                  <h3 className="font-medium text-sm sm:text-base md:text-lg text-[#78624E] mb-2 border-b border-[#E5D9CC] pb-1">
+                    How To Use
+                  </h3>
+                  <p className="text-xs sm:text-sm md:text-base text-gray-700">
+                    {productInfo.howToUse}
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="font-medium text-sm sm:text-base md:text-lg text-[#78624E] mb-2 border-b border-[#E5D9CC] pb-1">
+                    Key Ingredients
+                  </h3>
+                  <p className="text-xs sm:text-sm text-gray-600 italic">
+                    {productInfo.ingredients}
+                  </p>
+                </div> */}
+              </div>
+
               <a
                 href={productInfo.shopifyLink}
                 target="_blank"
@@ -444,13 +493,31 @@ const SoulSerumAR: React.FC<FaceMeshProps> = ({ onResults }) => {
                 Buy Now
               </a>
             </div>
+
+            {/* Additional Card for Testimonial */}
+            {/* <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg p-4 sm:p-5 md:p-6 hidden sm:block">
+              <div className="flex flex-col items-center text-center">
+                <div className="text-[#C09D7C] text-2xl md:text-3xl mb-2">
+                  ★★★★★
+                </div>
+                <p className="italic text-xs sm:text-sm md:text-base text-gray-700 mb-3">
+                  "This serum gives my skin the most beautiful natural glow. The
+                  Hawaiian botanicals make such a difference in my complexion!"
+                </p>
+                <p className="text-xs sm:text-sm text-[#78624E] font-medium">
+                  — Sarah K., Verified Customer
+                </p>
+              </div>
+            </div> */}
           </div>
         </div>
 
-        {/* Footer */}
+        {/* Footer with additional information */}
         <div className="mt-6 md:mt-8 lg:mt-10 text-center">
           <p className="text-xs sm:text-sm text-gray-500 max-w-3xl mx-auto">
-            Pure Mana Hawaii products are crafted with care using Hawaiian-grown ingredients. Our Soul Serum is made in small batches to ensure the highest quality. Cruelty-free, vegan, and clean beauty.
+            Pure Mana Hawaii products are crafted with care using Hawaiian-grown
+            ingredients. Our Soul Serum is made in small batches to ensure the
+            highest quality. Cruelty-free, vegan, and clean beauty.
           </p>
         </div>
       </div>
