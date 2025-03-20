@@ -39,7 +39,7 @@ const Landing: React.FC = () => {
             </ul>
             <div className="relative inline-block">
               <Link
-                to="/foundation-shades"
+                to="/serum-try-on"
                 className="w-40 2xl:w-56 2k:w-80 4k:w-96 h-10 2xl:h-14 2k:h-24 4k:h-32 
                          bg-custom-blue hover:bg-opacity-90 transition-all duration-300 
                          flex items-center justify-center cursor-pointer 
@@ -108,7 +108,7 @@ const Landing: React.FC = () => {
               </ul>
               <div className="relative inline-block">
                 <Link
-                  to="/foundation-shades"
+                  to="/serum-try-on"
                   className="w-40 2xl:w-56 2k:w-80 4k:w-96 h-10 2xl:h-14 2k:h-24 4k:h-32 
                            bg-custom-blue hover:bg-opacity-90 transition-all duration-300 
                            flex items-center justify-center cursor-pointer 

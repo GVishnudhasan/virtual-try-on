@@ -10,7 +10,7 @@ function App() {
       <div className="min-h-screen bg-white">
         <Routes>
           <Route path="/" element={<Landing />} />
-          <Route path="/foundation-shades" element={<SoulSerumAR />} />
+          <Route path="/serum-try-on" element={<SoulSerumAR />} />
         </Routes>
       </div>
     </BrowserRouter>
