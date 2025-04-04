@@ -332,7 +332,7 @@ const SoulSerumAR: React.FC<FaceMeshProps> = ({ onResults }) => {
   }, [videoLoaded]);
 
   return (
-    <div className="bg-gradient-to-b from-[#fdfaf5] to-[#f4efe7] h-screen w-full py-4 md:py-6 lg:py-8 xl:py-10 2xl:py-12">
+    <div className="bg-white h-screen w-full py-4 md:py-6 lg:py-8 xl:py-10 2xl:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 flex flex-col">
         <div className="flex flex-col lg:flex-row gap-6 md:gap-8 lg:gap-10 w-full">
           {/* AR Card Section */}
