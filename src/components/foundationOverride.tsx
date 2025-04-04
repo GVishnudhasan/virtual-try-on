@@ -334,18 +334,6 @@ const SoulSerumAR: React.FC<FaceMeshProps> = ({ onResults }) => {
   return (
     <div className="bg-gradient-to-b from-[#fdfaf5] to-[#f4efe7] h-screen w-full py-4 md:py-6 lg:py-8 xl:py-10 2xl:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 flex flex-col">
-        {/* Header */}
-        <div className="text-center mb-4 md:mb-6 lg:mb-8">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light tracking-tight">
-            <span className="text-[#C09D7C] font-normal">Soul Serum</span>{" "}
-            Virtual Try On
-          </h1>
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-[#78624E] mt-2 max-w-2xl mx-auto font-light">
-            Experience the illuminating effect of our Hawaiian botanical serum
-            on your skin
-          </p>
-        </div>
-
         <div className="flex flex-col lg:flex-row gap-6 md:gap-8 lg:gap-10 w-full">
           {/* AR Card Section */}
           <div className="w-full lg:w-3/5 bg-white/95 backdrop-blur-sm rounded-2xl h-1/2 shadow-lg overflow-hidden">
@@ -357,7 +345,8 @@ const SoulSerumAR: React.FC<FaceMeshProps> = ({ onResults }) => {
               <canvas
                 ref={canvasRef}
                 className="absolute inset-0"
-                style={{ zIndex: 2 }}
+                // style={{ zIndex: 2 }}
+                style={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
               />
               <div
                 ref={sliderRef}
@@ -407,118 +396,6 @@ const SoulSerumAR: React.FC<FaceMeshProps> = ({ onResults }) => {
               style={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
             />
           </div>
-
-          {/* Product Info Section */}
-          <div className="w-full lg:w-2/5 flex flex-col gap-4 sm:gap-5 md:gap-6">
-            {/* Product Card with Image */}
-            <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg p-4 sm:p-5 md:p-6 lg:p-7">
-              <div className="flex flex-col sm:flex-row items-center mb-4 sm:mb-6">
-                {/* Product Image */}
-                <div className="w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 xl:w-48 xl:h-48 flex-shrink-0 bg-gradient-to-br from-[#f8f4ed] to-[#fcfaf5] rounded-xl flex items-center justify-center shadow-sm mb-4 sm:mb-0">
-                  <img
-                    src={productImage}
-                    alt="Soul Serum Product"
-                    className="w-full h-full object-contain p-2"
-                  />
-                </div>
-                <div className="sm:ml-5 text-center sm:text-left">
-                  <h2 className="text-xl sm:text-2xl md:text-3xl font-light text-[#78624E]">
-                    {productInfo.name}
-                  </h2>
-                  <p className="text-sm sm:text-base md:text-lg text-[#C09D7C] font-light">
-                    {productInfo.subtitle}
-                  </p>
-                  <p className="text-sm md:text-base text-gray-600 mt-2 font-light">
-                    {productInfo.description}
-                  </p>
-                  <div className="flex flex-col sm:flex-row items-center gap-2 mt-3">
-                    <p className="text-lg sm:text-xl md:text-2xl font-medium text-[#78624E]">
-                      {productInfo.price}
-                    </p>
-                    <span className="text-xs sm:text-sm text-gray-500">
-                      {productInfo.size}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Tabs for Product Info */}
-              <div className="mt-4 space-y-4">
-                {/* <div>
-                  <h3 className="font-medium text-sm sm:text-base md:text-lg text-[#78624E] mb-2 border-b border-[#E5D9CC] pb-1">
-                    Key Benefits
-                  </h3>
-                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {productInfo.benefits.map((benefit, i) => (
-                      <li key={i} className="flex items-start text-xs sm:text-sm md:text-base text-gray-700">
-                        <span className="text-[#C09D7C] mr-2">✦</span> {benefit}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                
-                <div>
-                  <h3 className="font-medium text-sm sm:text-base md:text-lg text-[#78624E] mb-2 border-b border-[#E5D9CC] pb-1">
-                    How To Use
-                  </h3>
-                  <p className="text-xs sm:text-sm md:text-base text-gray-700">
-                    {productInfo.howToUse}
-                  </p>
-                </div>
-                
-                <div>
-                  <h3 className="font-medium text-sm sm:text-base md:text-lg text-[#78624E] mb-2 border-b border-[#E5D9CC] pb-1">
-                    Key Ingredients
-                  </h3>
-                  <p className="text-xs sm:text-sm text-gray-600 italic">
-                    {productInfo.ingredients}
-                  </p>
-                </div> */}
-              </div>
-
-              <a
-                href={productInfo.shopifyLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full bg-[#C09D7C] hover:bg-[#A88B6E] text-white text-center py-3 sm:py-3.5 md:py-4 rounded-xl font-normal text-sm sm:text-base md:text-lg tracking-wide transition-colors shadow-md mt-6"
-              >
-                Add To Cart
-              </a>
-              <a
-                href={productInfo.shopifyLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full bg-[#C09D7C] hover:bg-[#A88B6E] text-white text-center py-3 sm:py-3.5 md:py-4 rounded-xl font-normal text-sm sm:text-base md:text-lg tracking-wide transition-colors shadow-md mt-6"
-              >
-                Buy Now
-              </a>
-            </div>
-
-            {/* Additional Card for Testimonial */}
-            {/* <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg p-4 sm:p-5 md:p-6 hidden sm:block">
-              <div className="flex flex-col items-center text-center">
-                <div className="text-[#C09D7C] text-2xl md:text-3xl mb-2">
-                  ★★★★★
-                </div>
-                <p className="italic text-xs sm:text-sm md:text-base text-gray-700 mb-3">
-                  "This serum gives my skin the most beautiful natural glow. The
-                  Hawaiian botanicals make such a difference in my complexion!"
-                </p>
-                <p className="text-xs sm:text-sm text-[#78624E] font-medium">
-                  — Sarah K., Verified Customer
-                </p>
-              </div>
-            </div> */}
-          </div>
-        </div>
-
-        {/* Footer with additional information */}
-        <div className="mt-6 md:mt-8 lg:mt-10 text-center">
-          <p className="text-xs sm:text-sm text-gray-500 max-w-3xl mx-auto">
-            Pure Mana Hawaii products are crafted with care using Hawaiian-grown
-            ingredients. Our Soul Serum is made in small batches to ensure the
-            highest quality. Cruelty-free, vegan, and clean beauty.
-          </p>
         </div>
       </div>
     </div>
