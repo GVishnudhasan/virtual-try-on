@@ -1,46 +1,74 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 💄Virtual Try-On for Makeup
 
-## Available Scripts
+A real-time **AR-based Virtual Try-On** web application that lets users preview makeup products (like lipstick, blush, etc.) directly on their faces using just a webcam — no app download required!
 
-In the project directory, you can run:
+🔗 **Live Demo**: [theomnia.io/virtual-try-on](https://www.theomnia.io/virtual-try-on)  
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## 🚀 Features
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- 🧠 Real-time face mesh detection using **MediaPipe** (468 landmark points)
+- 💋 AR-based makeup overlays for lips, eyes, and cheeks using **GLSL shaders**
+- ⚡ GPU-accelerated rendering using **Three.js** and **TensorFlow.js**
+- 📱 Cross-platform support — works smoothly across modern browsers
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🛠 Tech Stack
 
-### `npm run build`
+- **Frontend**: React.js, HTML5, CSS3
+- **Rendering**: Three.js, TensorFlow.js, MediaPipe, WebGL
+- **Bundler**: Vite
+- **Deployment**: Netlify
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🔧 Local Setup
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+git clone https://github.com/GVishnudhasan/soul-serum.git
+cd soul-serum
 
-### `npm run eject`
+npm install
+npm run dev
+````
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Visit [http://localhost:5173](http://localhost:5173) to run the app locally.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## 🎯 Use Cases
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+* Virtual makeup try-on for beauty & cosmetics brands
+* AR-based online beauty consultations
+* Interactive product previews for e-commerce
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 🤝 Contributions
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+This is a proprietary project and is not open for external contributions. For collaborations, please reach out via LinkedIn or email. This application was fully developed by me, **Vishnudhasan Govindarajan**, as part of the acquisition of **SpotKwik** by **Omnia**.  
+All intellectual property (IP), rights, and branding associated with this project belong to **[Omnia](https://www.theomnia.io/)**.  
+This repo is maintained solely for **portfolio and demonstration purposes**.
+
+---
+
+## ⚠️ License
+
+```
+Proprietary License
+
+This software and its content are the intellectual property of Omnia.  
+You may not copy, distribute, or modify any part of this project without prior written consent from Omnia or the author.
+
+© 2025 Omnia. All Rights Reserved.
+```
+
+---
+
+## 👨‍💻 Author
+
+Built by [Vishnudhasan Govindarajan](https://github.com/GVishnudhasan)
+For inquiries, reach out via [LinkedIn](https://www.linkedin.com/in/vishnudhasan-govindarajan)
